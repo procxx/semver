@@ -27,6 +27,11 @@ Utils::Semver version("1.12.0");
 Utils::Semver version;
 version.fromString("1.12.0");
 ```
+Или задать через метод set:
+```C++
+Utils::Semver version;
+version.set(2, 0, 0, Utils::Semver::PreRelease::ReleaseCandidate); // 2.0.0-rc
+```
 ### Вывод
 Для вывода можно использовать либо метод `toString`, либо приведение:
 ```C++

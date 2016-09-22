@@ -28,8 +28,8 @@ namespace Utils {
 		explicit Semver(const char* versionStr);
 
 		operator const char*() const { return this->toString(); }
-		bool operator>(const Semver& ver) const { return this->isGreaterThen(ver); }
-		bool operator<(const Semver& ver) const { return this->isLesserThen(ver); }
+		bool operator>(const Semver& ver) const { return this->isNewerThen(ver); }
+		bool operator<(const Semver& ver) const { return this->isOlderThen(ver); }
 		bool operator==(const Semver& ver) const { return this->isEquals(ver); }
 
 		char*	toString		() const;
@@ -41,8 +41,8 @@ namespace Utils {
 			const uint8_t preReleaseVersion = 0);
 
 		bool	isEquals		(const Semver& ver) const;
-		bool	isGreaterThen	(const Semver& ver) const;
-		bool	isLesserThen	(const Semver& ver) const;
+		bool	isNewerThen		(const Semver& ver) const;
+		bool	isOlderThen		(const Semver& ver) const;
 	private:
 		char*		getPreReleaseStr(const PreRelease rel, const uint8_t version) const;
 		PreRelease 	getPreReleaseVal(const char* str);

@@ -44,38 +44,38 @@ int main() {
 	std::printf("Greater then:\n");
 
 	std::printf("%s", (const char*)version3);
-	std::printf(" %s ", version3.isGreaterThen(version4) ? ">" : "!>");
+	std::printf(" %s ", version3.isNewerThen(version4) ? ">" : "!>");
 	std::printf("%s\n", (const char*)version4);
 
 	std::printf("%s", (const char*)version4);
-	std::printf(" %s ", version4.isGreaterThen(version3) ? ">" : "!>");
+	std::printf(" %s ", version4.isNewerThen(version3) ? ">" : "!>");
 	std::printf("%s\n", (const char*)version3);
 
 	version3.fromString("1.12.0");
 	version4.fromString("1.12.0-alpha");
 	std::printf("%s", (const char*)version3);
-	std::printf(" %s ", version3.isGreaterThen(version4) ? ">" : "!>");
+	std::printf(" %s ", version3.isNewerThen(version4) ? ">" : "!>");
 	std::printf("%s\n", (const char*)version4);
 
 	std::printf("%s", (const char*)version4);
-	std::printf(" %s ", version4.isGreaterThen(version3) ? ">" : "!>");
+	std::printf(" %s ", version4.isNewerThen(version3) ? ">" : "!>");
 	std::printf("%s\n", (const char*)version3);
 
 	version3.fromString("1.12.0-alpha.3");
 	version4.fromString("1.12.0-alpha.4");
 	std::printf("%s", (const char*)version3);
-	std::printf(" %s ", version3.isGreaterThen(version4) ? ">" : "!>");
+	std::printf(" %s ", version3.isNewerThen(version4) ? ">" : "!>");
 	std::printf("%s\n", (const char*)version4);
 
 	std::printf("\n");
 	std::printf("Less then:\n");
 
 	std::printf("%s", (const char*)version3);
-	std::printf(" %s ", version3.isLesserThen(version4) ? "<" : "!<");
+	std::printf(" %s ", version3.isOlderThen(version4) ? "<" : "!<");
 	std::printf("%s\n", (const char*)version4);
 
 	std::printf("%s", (const char*)version4);
-	std::printf(" %s ", version4.isLesserThen(version3) ? "<" : "!<");
+	std::printf(" %s ", version4.isOlderThen(version3) ? "<" : "!<");
 	std::printf("%s\n", (const char*)version3);
 
 	return 0;

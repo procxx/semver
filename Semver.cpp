@@ -77,7 +77,7 @@ namespace Utils {
 		return false;
 	}
 
-	bool Semver::isGreaterThen(const Semver& ver) const {
+	bool Semver::isNewerThen(const Semver& ver) const {
 		if(this->major > ver.major)
 			return true;
 
@@ -96,7 +96,7 @@ namespace Utils {
 		return false;
 	}
 
-	bool Semver::isLesserThen(const Semver& ver) const {
+	bool Semver::isOlderThen(const Semver& ver) const {
 		if(this->major < ver.major)
 			return true;
 

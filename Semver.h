@@ -34,6 +34,12 @@ namespace Utils {
 
 		char*	toString		() const;
 		void	fromString		(const char* versionStr);
+		void	set(const uint32_t major = 0, 
+			const uint32_t minor = 1, 
+			const uint32_t patch = 0, 
+			const PreRelease preRelease = PreRelease::None,
+			const uint8_t preReleaseVersion = 0);
+
 		bool	isEquals		(const Semver& ver) const;
 		bool	isGreaterThen	(const Semver& ver) const;
 		bool	isLesserThen	(const Semver& ver) const;

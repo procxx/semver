@@ -54,6 +54,18 @@ namespace Utils {
 		this->preRelease = this->getPreReleaseVal(preReleaseStr);
 	}
 
+	void Semver::set(const uint32_t major, 
+			const uint32_t minor, 
+			const uint32_t patch, 
+			const PreRelease preRelease,
+			const uint8_t preReleaseVersion) {
+		this->major = major;
+		this->minor = minor;
+		this->patch = patch;
+		this->preRelease = preRelease;
+		this->preReleaseVersion = preReleaseVersion;
+	}
+
 	bool Semver::isEquals(const Semver& ver) const {
 		if(this->major == ver.major &&
 			this->minor == ver.minor && 

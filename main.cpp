@@ -25,7 +25,7 @@ int main() {
 
 	printf("\n\n");
 
-	// Test 2
+	// Test 3
 	std::printf("Compare versions\n");
 	std::printf("Equals:\n");
 	Utils::Semver version3(1, 12, 0);

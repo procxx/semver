@@ -8,14 +8,14 @@
 int main() {
 	// Test 1
 	std::printf("Format version object to string\n");
-	Utils::Semver version1(1, 0, 0, Utils::Semver::PreRelease::Alpha);
+	utils::Semver version1(1, 0, 0, utils::Semver::PreRelease::Alpha);
 	std::printf("Version 1: %s\n", (const char*)version1);
 
 	printf("\n\n");
 
 	// Test 2
 	std::printf("Parse version string to object\n");
-	Utils::Semver version2;
+	utils::Semver version2;
 	printf("Version before parsing: %s\n", (const char*)version2);
 	const char* versionStr = "2.12.10-betha.3";
 	version2.fromString(versionStr);
@@ -28,8 +28,8 @@ int main() {
 	// Test 3
 	std::printf("Compare versions\n");
 	std::printf("Equals:\n");
-	Utils::Semver version3(1, 12, 0);
-	Utils::Semver version4("1.12.0");
+	utils::Semver version3(1, 12, 0);
+	utils::Semver version4("1.12.0");
 	std::printf("%s", (const char*)version3);
 	std::printf(" %s ", version3.isEquals(version4) ? "=" : "!=");
 	std::printf("%s\n", (const char*)version4);

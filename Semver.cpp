@@ -3,7 +3,7 @@
 #include <cstring>
 #include <cstdio>
 
-namespace Utils {
+namespace utils {
 	Semver::Semver(const uint32_t major, 
 			const uint32_t minor, 
 			const uint32_t patch, 

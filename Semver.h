@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-namespace Utils {
+namespace utils {
 	class Semver {
 	public:
 		enum class PreRelease {

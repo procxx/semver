@@ -10,27 +10,27 @@
 ## Примеры
 ### Создание:
 ```C++
-Utils::Semver version;
+utils::Semver version;
 ```
 При этом будет задана версия `0.1.0`.
 Версию можно задать параметрами конструктора:
 ```C++
-Utils::Semver version(1, 0, 0, Utils::Semver::PreRelease::Alpha);
+utils::Semver version(1, 0, 0, utils::Semver::PreRelease::Alpha);
 ```
 После преобразования в строку это даст `1.0.0-alpha`.
 Так же возможно задание версии из строки:
 ```C++
-Utils::Semver version("1.12.0");
+utils::Semver version("1.12.0");
 ```
 Или:
 ```C++
-Utils::Semver version;
+utils::Semver version;
 version.fromString("1.12.0");
 ```
 Или задать через метод set:
 ```C++
-Utils::Semver version;
-version.set(2, 0, 0, Utils::Semver::PreRelease::ReleaseCandidate); // 2.0.0-rc
+utils::Semver version;
+version.set(2, 0, 0, utils::Semver::PreRelease::ReleaseCandidate); // 2.0.0-rc
 ```
 ### Вывод
 Для вывода можно использовать либо метод `toString`, либо приведение:

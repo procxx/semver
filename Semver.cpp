@@ -30,7 +30,7 @@ namespace utils {
 		}
 
 		const char* preReleaseBuffer = this->getPreReleaseStr(this->preRelease, this->preReleaseVersion);
-		std::sprintf(buffer, "%d.%d.%d%s", this->major, this->minor, this->patch, preReleaseBuffer);
+		std::sprintf(buffer, "%lu.%lu.%lu%s", this->major, this->minor, this->patch, preReleaseBuffer);
 
 		return buffer;
 	}
@@ -43,7 +43,7 @@ namespace utils {
 		this->preReleaseVersion = 0;
 
 		char preReleaseStr[6] = {0};
-		std::sscanf(versionStr, "%u.%u.%u-%5[^.].%u",
+		std::sscanf(versionStr, "%lu.%lu.%lu-%5[^.].%lu",
 			&this->major,
 			&this->minor, 
 			&this->patch,
@@ -124,7 +124,7 @@ namespace utils {
 		char versionBuffer[3] = {0};
 
 		if(version > 0 && version < 100) {
-			std::sprintf(versionBuffer, ".%d",version);
+			std::sprintf(versionBuffer, ".%u",version);
 		}
 
 		switch(rel) {

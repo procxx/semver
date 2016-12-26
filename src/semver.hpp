@@ -119,8 +119,8 @@ bool Semver::isEquals(const Semver& ver) const {
         this->preRelease == ver.preRelease &&
         this->preReleaseVersion == ver.preReleaseVersion) {
         return true;
-}
-return false;
+    }
+    return false;
 }
 
 bool Semver::isNewerThen(const Semver& ver) const {

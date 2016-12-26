@@ -11,6 +11,7 @@ int main() {
     std::printf("Format version object to string\n");
     Version version1(2, 0, 0, Version::Pre::Alpha);
     std::printf("Version 1: %s\n", Semver::toString(version1, buffer));
+    std::printf("Size of struct: %d\n", sizeof(version1));
 
     printf("\n\n");
 

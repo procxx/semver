@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <cstring>
 
+#pragma pack(push,1)
 struct Version {
     enum class Pre {
         None                = 0,
@@ -12,21 +13,21 @@ struct Version {
         ReleaseCandidate    = 3,
     };
 
-    Version(const uint32_t major = 0, 
-        const uint32_t minor = 1, 
-        const uint32_t patch = 0, 
+    Version(const uint16_t major = 0, 
+        const uint16_t minor = 1, 
+        const uint16_t patch = 0, 
         const Pre preRelease = Pre::None,
         const uint8_t preReleaseVersion = 0);
 
-    uint32_t    major;
-    uint32_t    minor;
-    uint32_t    patch;
+    uint16_t    major;
+    uint16_t    minor;
+    uint16_t    patch; 
+    uint8_t    preReleaseVersion;
     Pre         preRelease;
-    uint32_t    preReleaseVersion;
 
-    void set(const uint32_t major = 0, 
-        const uint32_t minor = 1, 
-        const uint32_t patch = 0, 
+    void set(const uint16_t major = 0, 
+        const uint16_t minor = 1, 
+        const uint16_t patch = 0, 
         const Pre preRelease = Pre::None,
         const uint8_t preReleaseVersion = 0);
 
@@ -38,6 +39,7 @@ struct Version {
     bool operator<     (const Version& ver) const { return this->isOlderThen(ver); }
     bool operator==    (const Version& ver) const { return this->isEquals(ver); }
 };
+#pragma pack(pop)
 
 class Semver {
 public:
@@ -52,9 +54,9 @@ private:
 
 // ========================================================================
 
-Version::Version(const uint32_t major, 
-    const uint32_t minor, 
-    const uint32_t patch, 
+Version::Version(const uint16_t major, 
+    const uint16_t minor, 
+    const uint16_t patch, 
     const Version::Pre preRelease,
     const uint8_t preReleaseVersion) 
 : major(major), minor(minor), patch(patch), 
@@ -62,9 +64,9 @@ preRelease(preRelease), preReleaseVersion(preReleaseVersion) {
 
 }
 
-void Version::set(const uint32_t major, 
-    const uint32_t minor, 
-    const uint32_t patch, 
+void Version::set(const uint16_t major, 
+    const uint16_t minor, 
+    const uint16_t patch, 
     const Version::Pre preRelease,
     const uint8_t preReleaseVersion) {
     this->major = major;

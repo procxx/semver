@@ -10,33 +10,28 @@
 ## Примеры
 ### Создание:
 ```C++
-utils::Semver version;
+Version version;
 ```
 При этом будет задана версия `0.1.0`.
 Версию можно задать параметрами конструктора:
 ```C++
-utils::Semver version(1, 0, 0, utils::Semver::PreRelease::Alpha);
+Version version(1, 0, 0, Version::Pre::Alpha);
 ```
 После преобразования в строку это даст `1.0.0-alpha`.
 Так же возможно задание версии из строки:
 ```C++
-utils::Semver version("1.12.0");
-```
-Или:
-```C++
-utils::Semver version;
-version.fromString("1.12.0");
+Version version = Semver::fromString("1.12.0");
 ```
 Или задать через метод set:
 ```C++
-utils::Semver version;
-version.set(2, 0, 0, utils::Semver::PreRelease::ReleaseCandidate); // 2.0.0-rc
+Version version;
+version.set(2, 0, 0, Version::Pre::ReleaseCandidate); // 2.0.0-rc
 ```
 ### Вывод
 Для вывода можно использовать либо метод `toString`, либо приведение:
 ```C++
-std::printf("Version: %s\n", version.toString());
-std::printf("Version: %s\n", (const char*)version);
+char buffer[22] = {0};
+std::printf("Version: %s\n", Semver::toString(version, buffer));
 ```
 Все поля версий (major, minor, etc) являются открытыми и свободны в использовании.
 
@@ -44,8 +39,8 @@ std::printf("Version: %s\n", (const char*)version);
 Для сравнения версий можно использовать как операторы `>`,`<`,`==`, так и методы:
 ```C++
 if(version1.isEquals(version2)) { /* ... */ }
-if(version1.isGreaterThen(version2)) { /* ... */ }
-if(version1.isLesserThen(version2)) { /* ... */ }
+if(version1.isNewerThen(version2)) { /* ... */ }
+if(version1.isOlderThen(version2)) { /* ... */ }
 
 if(version1 == version2) { /* ... */ }
 if(version1 > version2) { /* ... */ }

@@ -4,106 +4,68 @@
 #include <stddef.h>
 #include <cstring>
 
-class Semver {
-public:
-    enum class Meta {
+struct Version {
+    enum class Pre {
         None                = 0,
         Alpha               = 1,
         Betha               = 2,
         ReleaseCandidate    = 3,
     };
 
+    Version(const uint32_t major = 0, 
+        const uint32_t minor = 1, 
+        const uint32_t patch = 0, 
+        const Pre preRelease = Pre::None,
+        const uint8_t preReleaseVersion = 0);
+
     uint32_t    major;
     uint32_t    minor;
     uint32_t    patch;
-    Meta        preRelease;
+    Pre         preRelease;
     uint32_t    preReleaseVersion;
 
-    Semver(const uint32_t major = 0, 
+    void set(const uint32_t major = 0, 
         const uint32_t minor = 1, 
         const uint32_t patch = 0, 
-        const Meta preRelease = Meta::None,
+        const Pre preRelease = Pre::None,
         const uint8_t preReleaseVersion = 0);
 
-    explicit Semver(const char* versionStr);
+    bool isEquals      (const Version& ver) const;
+    bool isNewerThen   (const Version& ver) const;
+    bool isOlderThen   (const Version& ver) const;
 
-    operator const char*() const { return this->toString(); }
-    bool operator>(const Semver& ver) const { return this->isNewerThen(ver); }
-    bool operator<(const Semver& ver) const { return this->isOlderThen(ver); }
-    bool operator==(const Semver& ver) const { return this->isEquals(ver); }
+    bool operator>     (const Version& ver) const { return this->isNewerThen(ver); }
+    bool operator<     (const Version& ver) const { return this->isOlderThen(ver); }
+    bool operator==    (const Version& ver) const { return this->isEquals(ver); }
+};
 
-    char*   toString        () const;
-    void    fromString      (const char* versionStr);
-    void    set(const uint32_t major = 0, 
-        const uint32_t minor = 1, 
-        const uint32_t patch = 0, 
-        const Meta preRelease = Meta::None,
-        const uint8_t preReleaseVersion = 0);
+class Semver {
+public:
+    Semver() = delete;
 
-    bool    isEquals        (const Semver& ver) const;
-    bool    isNewerThen     (const Semver& ver) const;
-    bool    isOlderThen     (const Semver& ver) const;
+    static char*        toString    (const Version& ver, char* buffer);
+    static Version      fromString  (const char* versionStr);
 private:
-    char*   getMetaStr(const Meta rel, const uint8_t version) const;
-    Meta    getMetaVal(const char* str);
+    static char*        getPreStr   (const Version::Pre rel, const uint8_t version);
+    static Version::Pre getPreVal   (const char* str);
 };
 
 // ========================================================================
 
-Semver::Semver(const uint32_t major, 
+Version::Version(const uint32_t major, 
     const uint32_t minor, 
     const uint32_t patch, 
-    const Meta preRelease,
+    const Version::Pre preRelease,
     const uint8_t preReleaseVersion) 
 : major(major), minor(minor), patch(patch), 
 preRelease(preRelease), preReleaseVersion(preReleaseVersion) {
 
 }
 
-Semver::Semver(const char* versionStr) 
-: major(0), minor(1), patch(0), 
-preRelease(Meta::None), preReleaseVersion(0) {
-    if(versionStr != nullptr) {
-        this->fromString(versionStr);
-    }
-}
-
-char* Semver::toString() const {
-    static const size_t bufferSize = 21;
-    static char buffer[bufferSize] = {0};
-    for(size_t i = 0; i < bufferSize; ++i) {
-        buffer[i] = '\0';
-    }
-
-    const char* preReleaseBuffer = this->getMetaStr(this->preRelease, this->preReleaseVersion);
-    std::sprintf(buffer, "%lu.%lu.%lu%s", this->major, this->minor, this->patch, preReleaseBuffer);
-
-    return buffer;
-}
-
-void Semver::fromString(const char* versionStr) {
-    this->major = 0;
-    this->minor = 0;
-    this->patch = 0;
-    this->preRelease = Meta::None;
-    this->preReleaseVersion = 0;
-
-    char preReleaseStr[6] = {0};
-    std::sscanf(versionStr, "%lu.%lu.%lu-%5[^.].%lu",
-        &this->major,
-        &this->minor, 
-        &this->patch,
-        preReleaseStr,
-        &this->preReleaseVersion);
-
-    this->preReleaseVersion = (this->preReleaseVersion < 100 ? this->preReleaseVersion : 0);
-    this->preRelease = this->getMetaVal(preReleaseStr);
-}
-
-void Semver::set(const uint32_t major, 
+void Version::set(const uint32_t major, 
     const uint32_t minor, 
     const uint32_t patch, 
-    const Meta preRelease,
+    const Version::Pre preRelease,
     const uint8_t preReleaseVersion) {
     this->major = major;
     this->minor = minor;
@@ -112,7 +74,7 @@ void Semver::set(const uint32_t major,
     this->preReleaseVersion = preReleaseVersion;
 }
 
-bool Semver::isEquals(const Semver& ver) const {
+bool Version::isEquals(const Version& ver) const {
     if(this->major == ver.major &&
         this->minor == ver.minor && 
         this->patch == ver.patch &&
@@ -123,7 +85,7 @@ bool Semver::isEquals(const Semver& ver) const {
     return false;
 }
 
-bool Semver::isNewerThen(const Semver& ver) const {
+bool Version::isNewerThen(const Version& ver) const {
     if(this->major > ver.major)
         return true;
 
@@ -142,7 +104,7 @@ bool Semver::isNewerThen(const Semver& ver) const {
     return false;
 }
 
-bool Semver::isOlderThen(const Semver& ver) const {
+bool Version::isOlderThen(const Version& ver) const {
     if(this->major < ver.major)
         return true;
 
@@ -161,10 +123,47 @@ bool Semver::isOlderThen(const Semver& ver) const {
     return false;
 }
 
+// ----------------------------------------------------------------------------
+
+char* Semver::toString(const Version& version, char* buffer) {
+    static const size_t bufferSize = 21;
+    memset(buffer, 0, bufferSize);
+    for(size_t i = 0; i < bufferSize; ++i) {
+        buffer[i] = '\0';
+    }
+
+    const char* preReleaseBuffer = Semver::getPreStr(version.preRelease, version.preReleaseVersion);
+    std::sprintf(buffer, "%lu.%lu.%lu%s", version.major, version.minor, version.patch, preReleaseBuffer);
+
+    return buffer;
+}
+
+Version Semver::fromString(const char* versionStr) {
+    Version result;
+    result.major = 0;
+    result.minor = 0;
+    result.patch = 0;
+    result.preRelease = Version::Pre::None;
+    result.preReleaseVersion = 0;
+
+    char preReleaseStr[6] = {0};
+    std::sscanf(versionStr, "%lu.%lu.%lu-%5[^.].%lu",
+        &result.major,
+        &result.minor, 
+        &result.patch,
+        preReleaseStr,
+        &result.preReleaseVersion);
+
+    result.preReleaseVersion = (result.preReleaseVersion < 100 ? result.preReleaseVersion : 0);
+    result.preRelease = Semver::getPreVal(preReleaseStr);
+
+    return result;
+}
+
 // ------------------------------------------------------------------------
 // Internal methods
 
-char* Semver::getMetaStr(const Meta rel, const uint8_t version) const {
+char* Semver::getPreStr(const Version::Pre rel, const uint8_t version) {
     static const size_t bufferSize = 10;
     static char buffer[bufferSize] = {0};
     char versionBuffer[3] = {0};
@@ -174,30 +173,30 @@ char* Semver::getMetaStr(const Meta rel, const uint8_t version) const {
     }
 
     switch(rel) {
-        case Meta::None:
+        case Version::Pre::None:
         buffer[0] = '\0';
         break;
-        case Meta::Alpha:
-        std::sprintf(buffer, "-alpha%s",versionBuffer);
+        case Version::Pre::Alpha:
+        std::sprintf(buffer, "-alpha%s", versionBuffer);
         break;
-        case Meta::Betha:
-        std::sprintf(buffer, "-betha%s",versionBuffer);
+        case Version::Pre::Betha:
+        std::sprintf(buffer, "-betha%s", versionBuffer);
         break;
-        case Meta::ReleaseCandidate:
-        std::sprintf(buffer, "-rc%s",versionBuffer);
+        case Version::Pre::ReleaseCandidate:
+        std::sprintf(buffer, "-rc%s", versionBuffer);
         break;
     }
     return buffer;
 }
 
-Semver::Meta Semver::getMetaVal(const char* str) {
-    Meta result = Meta::None;
+Version::Pre Semver::getPreVal(const char* str) {
+    Version::Pre result = Version::Pre::None;
     if(std::strcmp(str,"alpha") == 0) {
-        result = Meta::Alpha;
+        result = Version::Pre::Alpha;
     } else if(std::strcmp(str,"betha") == 0) {
-        result = Meta::Betha;
+        result = Version::Pre::Betha;
     } else if(std::strcmp(str,"rc") == 0) {
-        result = Meta::ReleaseCandidate;
+        result = Version::Pre::ReleaseCandidate;
     }
     return result;
 }

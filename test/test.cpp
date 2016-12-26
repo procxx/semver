@@ -3,7 +3,7 @@
 
 #include <cstdio>
 
-#include "Semver.h"
+#include "semver.hpp"
 
 int main() {
 	// Test 1

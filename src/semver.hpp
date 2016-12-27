@@ -170,7 +170,7 @@ char* Semver::getPreStr(const Version::Pre rel, const uint8_t version) {
     static char buffer[bufferSize] = {0};
     char versionBuffer[3] = {0};
 
-    if(version > 0 && version < 100) {
+    if (version < 100) {
         std::sprintf(versionBuffer, ".%u",version);
     }
 

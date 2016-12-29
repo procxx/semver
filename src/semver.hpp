@@ -45,11 +45,12 @@ class Semver {
 public:
     Semver() = delete;
 
-    static char*        toString    (const Version& ver, char* buffer);
-    static Version      fromString  (const char* versionStr);
+    static char*            toString    (const Version& ver, char* buffer);
+    static Version          fromString  (const char* versionStr);
+    static constexpr size_t getMinVerStringSize();
 private:
-    static char*        getPreStr   (const Version::Pre rel, const uint8_t version);
-    static Version::Pre getPreVal   (const char* str);
+    static char*            getPreStr   (const Version::Pre rel, const uint8_t version);
+    static Version::Pre     getPreVal   (const char* str);
 };
 
 // ========================================================================
@@ -198,3 +199,6 @@ Version::Pre Semver::getPreVal(const char* str) {
     }
     return result;
 }
+
+constexpr size_t getMinVerStrSize() {
+    return sizeof("

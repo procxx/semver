@@ -127,15 +127,11 @@ bool Version::isOlderThen(const Version& ver) const {
 
 // ----------------------------------------------------------------------------
 
-char* Semver::toString(const Version& version, char* buffer) {
+char* Semver::toString(const Version& version, char* buffer, const size_t size) {
     static const size_t bufferSize = 21;
-    memset(buffer, 0, bufferSize);
-    for(size_t i = 0; i < bufferSize; ++i) {
-        buffer[i] = '\0';
-    }
-
+   
     const char* preReleaseBuffer = Semver::getPreStr(version.preRelease, version.preReleaseVersion);
-    std::sprintf(buffer, "%lu.%lu.%lu%s", version.major, version.minor, version.patch, preReleaseBuffer);
+    std::snprintf(buffer, size, "%lu.%lu.%lu%s", version.major, version.minor, version.patch, preReleaseBuffer);
 
     return buffer;
 }

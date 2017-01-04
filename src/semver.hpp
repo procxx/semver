@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <cinttypes>
 #include <cstring>
 #include <cstdio>  
 
@@ -107,8 +108,7 @@ bool Version::isNewerThen(const Version& ver) const {
     return false;
 }
 
-bool Version::isOlderThen(const Version& ver) const {
-    if(this->major < ver.major)
+bool Version::isOlderThen(const Version& ver) const {    if(this->major < ver.major)
         return true;
 
     if(this->minor < ver.minor)
@@ -132,7 +132,8 @@ char* Semver::toString(const Version& version, char* buffer, const size_t size) 
     static const size_t bufferSize = 21;
    
     const char* preReleaseBuffer = Semver::getPreStr(version.preRelease, version.preReleaseVersion);
-    std::snprintf(buffer, size, "%lu.%lu.%lu%s", version.major, version.minor, version.patch, preReleaseBuffer);
+    std::snprintf(buffer, size, "%" PRIu16 ".%" PRIu16 ".%" PRIu16 "%s",
+                  version.major, version.minor, version.patch, preReleaseBuffer);
 
     return buffer;
 }
@@ -146,7 +147,7 @@ Version Semver::fromString(const char* versionStr) {
     result.preReleaseVersion = 0;
 
     char preReleaseStr[6] = {0};
-    std::sscanf(versionStr, "%lu.%lu.%lu-%5[^.].%lu",
+    std::sscanf(versionStr, "%" SCNu16 ".%" SCNu16 ".%" SCNu16 "-%5[^.].%" SCNu8,
         &result.major,
         &result.minor, 
         &result.patch,
@@ -168,7 +169,7 @@ char* Semver::getPreStr(const Version::Pre rel, const uint8_t version) {
     char versionBuffer[3] = {0};
 
     if (version < 100) {
-        std::sprintf(versionBuffer, ".%u",version);
+        std::sprintf(versionBuffer, ".%" PRIu8, version);
     }
 
     switch(rel) {

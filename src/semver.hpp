@@ -46,7 +46,7 @@ class Semver {
 public:
     Semver() = delete;
 
-    static char*        toString    (const Version& ver, char* buffer, const size_t size);
+    static char*        toString    (const Version& ver, char* buffer, const size_t size = 21);
     static Version      fromString  (const char* versionStr);
 private:
     static char*        getPreStr   (const Version::Pre rel, const uint8_t version);

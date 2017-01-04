@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <cstring>
+#include <cstdio>  
 
 #pragma pack(push,1)
 struct Version {
@@ -45,7 +46,7 @@ class Semver {
 public:
     Semver() = delete;
 
-    static char*        toString    (const Version& ver, char* buffer);
+    static char*        toString    (const Version& ver, char* buffer, const size_t size);
     static Version      fromString  (const char* versionStr);
 private:
     static char*        getPreStr   (const Version::Pre rel, const uint8_t version);

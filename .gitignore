@@ -27,3 +27,8 @@
 *.exe
 *.out
 *.app
+
+# IDEs
+.idea
+.vs
+.vscode

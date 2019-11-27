@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <cinttypes>
 #include <cstring>
 #include <cstdio>
 
@@ -50,7 +51,7 @@ class Semver {
 public:
   Semver () = delete;
 
-  static char*        toString    (const Version& ver, char* buffer, const size_t size);
+  static char*        toString    (const Version& ver, char* buffer, const size_t size = 21);
   static Version      fromString  (const char* versionStr);
 private:
   static char*        getPreStr   (const Version::Pre rel, const uint8_t version);
@@ -137,11 +138,12 @@ bool Version::isOlderThen(const Version& ver) const {
 
 // ----------------------------------------------------------------------------
 
-char* Semver::toString (const Version& version, char* buffer, const size_t size) {
-  static const size_t bufferSize = 21;
+char* Semver::toString(const Version& version, char* buffer, const size_t size) {
+    static const size_t bufferSize = 21;
 
-  const char* preReleaseBuffer = Semver::getPreStr(version.preRelease, version.preReleaseVersion);
-  std::snprintf(buffer, size, "%lu.%lu.%lu%s", version.major, version.minor, version.patch, preReleaseBuffer);
+    const char* preReleaseBuffer = Semver::getPreStr(version.preRelease, version.preReleaseVersion);
+    std::snprintf(buffer, size, "%" PRIu16 ".%" PRIu16 ".%" PRIu16 "%s",
+                  version.major, version.minor, version.patch, preReleaseBuffer);
 
   return buffer;
 }
@@ -156,7 +158,7 @@ Version Semver::fromString (const char* versionStr) {
 
   char preReleaseStr[6] = {0};
   std::sscanf(
-    versionStr, "%lu.%lu.%lu-%5[^.].%lu",
+    versionStr, "%" SCNu16 ".%" SCNu16 ".%" SCNu16 "-%5[^.].%" SCNu8,
     &result.major,
     &result.minor,
     &result.patch,
@@ -178,9 +180,9 @@ char* Semver::getPreStr (const Version::Pre rel, const uint8_t version) {
   static char buffer[bufferSize] = {0};
   char versionBuffer[3] = {0};
 
-  if (version < 100) {
-    std::sprintf(versionBuffer, ".%u",version);
-  }
+    if (version < 100) {
+        std::sprintf(versionBuffer, ".%" PRIu8, version);
+    }
 
   switch(rel) {
     case Version::Pre::None:

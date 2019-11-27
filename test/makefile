@@ -1,5 +1,5 @@
 CC 			= g++
-CCFLAGS 	= -static -std=c++1z
+CCFLAGS 	= -static -std=c++11
 INCLUDE		= -I"../src"
 TARGET		= test.exe
 OPTIMIZE	= -O3

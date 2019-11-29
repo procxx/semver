@@ -28,7 +28,9 @@
 *.out
 *.app
 
-# IDEs
+# IDEs and temporary
 .idea
 .vs
 .vscode
+bin/
+build/

@@ -3,6 +3,8 @@
 #include <sstream>
 #include <list>
 #include <regex>
+#include <vector>
+#include <utility>
 
 
 namespace procxx {
@@ -39,11 +41,11 @@ namespace procxx {
   public:
     // Fields
 
-    int32_t             major;
-    int32_t             minor;
-    int32_t             patch;
+    uint32_t             major;
+    uint32_t             minor;
+    uint32_t             patch;
     release_type        release;
-    int32_t             release_number;
+    uint32_t             release_number;
 
     // Ctors
 
@@ -84,11 +86,11 @@ namespace procxx {
   // Factory methods
 
   constexpr version make_version(
-    const int32_t major = 0,
-    const int32_t minor = 1,
-    const int32_t patch = 0,
+    const uint32_t major = 0,
+    const uint32_t minor = 1,
+    const uint32_t patch = 0,
     const version::release_type release = base_version::release_type::release,
-    const int32_t release_number = 0
+    const uint32_t release_number = 0
   );
 
   template<typename string_type = std::string>
@@ -235,11 +237,11 @@ namespace procxx {
   }
 
   constexpr version make_version(
-    const int32_t major,
-    const int32_t minor,
-    const int32_t patch,
+    const uint32_t major,
+    const uint32_t minor,
+    const uint32_t patch,
     const base_version::release_type release,
-    const int32_t release_number
+    const uint32_t release_number
   ) {
     version result;
 
@@ -252,6 +254,68 @@ namespace procxx {
     return result;
   }
 
+  namespace internal {
+    template<typename string_type = std::string>
+    std::list<string_type> split (const string_type& str, const string_type& delims) {
+      std::list<string_type> tokens;
+      std::size_t current = str.find_first_of(delims);
+      std::size_t previous = 0;
+
+      while (current != std::string::npos) {
+          tokens.push_back(str.substr(previous, current - previous));
+          previous = current + 1;
+          current = str.find_first_of(delims, previous);
+      }
+      tokens.push_back(str.substr(previous, current - previous));
+
+      return tokens;
+    }
+
+    void validate_number_token (const std::string& token) {
+      const std::regex digits_regex("[0-9]*");
+
+      if (std::regex_match(token, digits_regex) == 0) {
+        throw version_exception("Invalid version number part. This part should be a number.");
+      }
+    }
+
+    void validate_release_type_token (const std::string& token) {
+      const std::regex release_type_regex("nightly|alpha|beta|rc");
+
+      if (std::regex_match(token, release_type_regex) == 0) {
+        throw version_exception("Invalid release type. This part should be a string: (nightly|alpha|beta|rc).");
+      }
+    }
+
+    using parser = void(version& ver, const std::string& token);
+    const std::vector<std::vector<parser*>> parsers = {
+      {
+        [] (version& ver, const std::string& token) {
+          validate_number_token(token);
+          ver.major = std::stoi(token);
+        },
+        [] (version& ver, const std::string& token) {
+          validate_number_token(token);
+          ver.minor = std::stoi(token);
+        },
+        [] (version& ver, const std::string& token) {
+          validate_number_token(token);
+          ver.patch = std::stoi(token);
+        }
+      },
+      {
+        [] (version& ver, const std::string& token) {
+          validate_release_type_token(token);
+          ver.release = from_string(token);
+        },
+        [] (version& ver, const std::string& token) {
+          validate_number_token(token);
+          ver.release_number = std::stoi(token);
+        }
+      }
+    };
+  }
+
   template<typename string_type>
   version make_version(
     const string_type& str
@@ -259,63 +323,24 @@ namespace procxx {
     version result;
 
     // Split version string by delimeters
-    const std::string delims(".-+");
-    std::list<string_type> tokens;
-    std::size_t current = str.find_first_of(delims);
-    std::size_t previous = 0;
+    const string_type semver_delims("-+");
+    const string_type version_delims(".");
+    std::list<string_type> semver_tokens = internal::split(str, semver_delims);
 
-    while (current != std::string::npos) {
-        tokens.push_back(str.substr(previous, current - previous));
-        previous = current + 1;
-        current = str.find_first_of(delims, previous);
-    }
-    tokens.push_back(str.substr(previous, current - previous));
-
-    // Parse tokens from string
-    const std::regex digits_regex("[0-9]*");
-    const std::regex release_type_regex("[0-9A-Za-z]*");
-    std::size_t index = 0;
-    for (auto token : tokens) {
-      switch (index) {
-        case 0:
-          if (std::regex_match(token, digits_regex) == 0) {
-            throw version_exception("Invalid major part. This part shuold be a number.");
-          }
-          result.major = std::stoi(token);
-          break;
-
-        case 1:
-          if (std::regex_match(token, digits_regex) == 0) {
-            throw version_exception("Invalid minor part. This part shuold be a number.");
-          }
-          result.minor = std::stoi(token);
-          break;
-
-        case 2:
-          if (std::regex_match(token, digits_regex) == 0) {
-            throw version_exception("Invalid patch part. This part shuold be a number.");
-          }
-          result.patch = std::stoi(token);
-          break;
-
-        case 3:
-          if (std::regex_match(token, release_type_regex) == 0) {
-            throw version_exception("Invalid release type. This part shuold be a string: (nightly|alpha|beta|rc).");
-          }
-          result.release = from_string(token);
-          break;
-
-        case 4:
-          if (std::regex_match(token, digits_regex) == 0) {
-            throw version_exception("Invalid release number part. This part shuold be a number.");
-          }
-          result.release_number = std::stoi(token);
-          break;
-
-        default:
-          break;
+    // Parse version by parts from string
+    std::size_t part = 0;
+    for (auto semver_part : semver_tokens) {
+      const std::list<string_type> tokens = internal::split(semver_part, version_delims);
+      std::size_t token_index = 0;
+      for (auto token : tokens) {
+        internal::parsers[part][token_index](result, token);
+        ++token_index;
       }
-      ++index;
+
+      ++part;
+      if (part >= internal::parsers.size()) {
+        break;
+      }
     }
 
     return result;

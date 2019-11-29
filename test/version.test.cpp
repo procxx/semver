@@ -21,8 +21,8 @@ TEST_CASE("[version] 1. Check factory make_version()", "[multi-file]") {
 }
 
 TEST_CASE("[version] 2. Check factory make_version()", "[multi-file]") {
-  const std::string versionStr = "1.2.3";
-  procxx::version ver = procxx::make_version(versionStr);
+  const std::string version_str = "1.2.3";
+  procxx::version ver = procxx::make_version(version_str);
 
   REQUIRE(ver.major == 1);
   REQUIRE(ver.minor == 2);
@@ -30,8 +30,8 @@ TEST_CASE("[version] 2. Check factory make_version()", "[multi-file]") {
 }
 
 TEST_CASE("[version] 3. Check factory make_version()", "[multi-file]") {
-  const std::string versionStr = "1.2.3-beta.2";
-  procxx::version ver = procxx::make_version(versionStr);
+  const std::string version_str = "1.2.3-beta.2";
+  procxx::version ver = procxx::make_version(version_str);
 
   REQUIRE(ver.major == 1);
   REQUIRE(ver.minor == 2);
@@ -44,6 +44,34 @@ TEST_CASE("[version] 4. Check factory make_version()", "[multi-file]") {
   const std::string versionStr = "1.a.3-beta.2";
 
   REQUIRE_THROWS(procxx::make_version(versionStr));
+}
+
+TEST_CASE("[version] 5. Check factory make_version()", "[multi-file]") {
+  const std::string versionStr = "1.1.3-x.2";
+
+  REQUIRE_THROWS(procxx::make_version(versionStr));
+}
+
+TEST_CASE("[version] 6. Check factory make_version()", "[multi-file]") {
+  const std::string version_str = "2.1-alpha";
+  procxx::version ver = procxx::make_version(version_str);
+
+  REQUIRE(ver.major == 2);
+  REQUIRE(ver.minor == 1);
+  REQUIRE(ver.patch == 0);
+  REQUIRE(ver.release == procxx::version::release_type::alpha);
+  REQUIRE(ver.release_number == 0);
+}
+
+TEST_CASE("[version] 7. Check factory make_version()", "[multi-file]") {
+  const std::string version_str = "2.1-nightly+20200101";
+  procxx::version ver = procxx::make_version(version_str);
+
+  REQUIRE(ver.major == 2);
+  REQUIRE(ver.minor == 1);
+  REQUIRE(ver.patch == 0);
+  REQUIRE(ver.release == procxx::version::release_type::nightly);
+  REQUIRE(ver.release_number == 0);
 }
 
 TEST_CASE("[version] 1. Check literal ctor \"_version\"", "[multi-file]") {
